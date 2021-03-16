@@ -2,7 +2,7 @@ pragma solidity ^0.7.0;
  
  
  
-interface IUNIv2 {
+interface IPCS {
     function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) 
     external 
     payable 
@@ -151,7 +151,7 @@ abstract contract Context {
 contract TRUST is Context, Ibep20, ReentrancyGuard {
     using SafeMath for uint256;
  
-     IUNIv2 constant pancake =  IUNIv2(0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F);
+    IPCS constant pancake =  IPCS(0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F);
     IpancakeV2Factory constant pancakeFactory = IpancakeV2Factory(0xBCfCcbde45cE874adCB698cC183deBcF17952812);
  
     mapping (address => uint256) private _balances;
@@ -174,8 +174,8 @@ contract TRUST is Context, Ibep20, ReentrancyGuard {
     
  
     address payable _owner;
-    address payable multisig;
-    address payable deflect;
+    address payable multisig; // Address will be added after the multisig contract is deployed 
+    address payable deflect = 0x5ABBd94bb0561938130d83FdA22E672110e12528;
     address public pool;
  
     uint256 public liquidityUnlock;
@@ -209,6 +209,12 @@ contract TRUST is Context, Ibep20, ReentrancyGuard {
         require(pool == address(0), "the pool already created");
         pool = pancakeFactory.createPair(address(this), pancake.WETH());
     }
+    
+     function setMultisigAddress(address payable addr) external onlyOwner{
+        require(multisig == address(0), "the multisig is already set");
+        multisig = addr;
+    }
+ 
  
     receive() external payable {
         buyTokens();
@@ -243,8 +249,8 @@ contract TRUST is Context, Ibep20, ReentrancyGuard {
  
     function claimDevFeeAndAddLiquidity() external onlyOwner {
        require(!devClaimed);
-       uint256 forDeflect = address(this).balance.mul(275).div(1000);
-       uint256 forMultisig = address(this).balance.mul(35).div(100);
+       uint256 forDeflect = address(this).balance.mul(200).div(1000); // 20%
+       uint256 forMultisig = address(this).balance.mul(425).div(1000); //42.4%
  
        multisig.transfer(forMultisig);
        deflect.transfer(forDeflect);
