@@ -73,6 +73,7 @@ interface IBEP20 {
  
 contract Multisig {
     using SafeBEP20 for IBEP20;
+    using Address for address payable;
     IBEP20 public tokenToTransfer;
     bool public canTransferToken;
     address public recipientForToken;
@@ -139,7 +140,7 @@ contract Multisig {
          canTransferBNB = false;
          amountToTransferForBNB = 0;
          recipientForBNB = address(0);
-         _recipientForBNB.transfer(_amountToTransferBNB);
+         _recipientForBNB.sendValue(_amountToTransferBNB);
     }
 }
 
