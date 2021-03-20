@@ -1,6 +1,7 @@
 pragma solidity 0.7.6;
  
  
+ 
 interface IPCS {
     function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) 
     external 
@@ -196,7 +197,7 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
         
         _totalSupply = 1000000 ether;
         refundTime = block.timestamp.add(30 days);
-        liquidityUnlock = block.timestamp.add(365 days);
+        liquidityUnlock = block.timestamp.add(180 days);
         _balances[_owner] = _totalSupply; 
         emit Transfer(address(0), _owner, _totalSupply);
     }
@@ -218,7 +219,7 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
  
  
      function buyTokens() public payable nonReentrant  {
-        require(msg.sender == tx.origin);
+        require(msg.sender == tx.origin, "Can not be called from contract");
         require(!isStopped, "Presale stopped by contract, do not send BNB");
         require(msg.value >= 0.1 ether, "You sent less than 0.1 BNB");
         require(msg.value <= 25 ether, "You sent more than 25 BNB");
@@ -244,10 +245,10 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
     }
  
     function claimDevFeeAndAddLiquidity() external onlyOwner {
-       require(!devClaimed);
+       require(!devClaimed, "Development fee is already taken");
+ 
        uint256 forDeflect = address(this).balance.mul(200).div(1000); // 20%
        uint256 forMultisig = address(this).balance.mul(425).div(1000); //42.4%
- 
        
        devClaimed = true;
        
@@ -263,8 +264,8 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
     }
  
     function getRefund() external nonReentrant {
-        require(msg.sender == tx.origin);
-        require(!moonMissionStarted);
+        require(msg.sender == tx.origin, "Can not be called from contract");
+        require(!moonMissionStarted, "The moon mission already started!");
         // To get refund it should be enabled by the owner OR 10 days had passed 
         require(isRefundEnabled || block.timestamp >= refundTime,"Cannot refund");
         address payable user = msg.sender;
@@ -274,7 +275,7 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
     }
  
     function burnMyTokensFOREVER(uint256 amount) external {
-        require(amount > 0);
+        require(amount > 0, "Amuount can not be 0 ");
         address account = msg.sender;
         _beforeTokenTransfer(account, address(0), amount);
  
@@ -285,7 +286,7 @@ contract Trustworks is Context, IBEP20, ReentrancyGuard {
  
  
     function moonMissionStart() internal {
-        require(!moonMissionStarted);
+        require(!moonMissionStarted, "The moon mission already started!");
         uint256 ETH = address(this).balance;
         uint256 tokensForpancake = address(this).balance.mul(400); // always list at 1 BNB = 400 TRUST 
         uint tokensToBurn = balanceOf(address(this)).sub(tokensForpancake);
