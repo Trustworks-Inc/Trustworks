@@ -95,7 +95,7 @@ contract TrustTeamTokensLocker {
     IBEP20 TRUST = IBEP20(0x2dBd86A424a815AD2A08a2D8dAE07007fed6Dc91);
 
     modifier onlyOwners() {
-        require(msg.sender == 0xe1cDA441ffA203eCA692E3398f3C3346Ee2B786e || msg.sender == 0x59b9b3C706a00E0A546035806A95e54b0b948D7d, "You are not one of the owners");
+        require(msg.sender == 0xe1cDA441ffA203eCA692E3398f3C3346Ee2B786e || msg.sender == 0xE298a311949745b7009174A9bD7c990ffE3Eea5E, "You are not one of the owners");
         _;
     }
 
