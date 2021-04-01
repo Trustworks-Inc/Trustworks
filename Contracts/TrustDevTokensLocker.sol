@@ -95,7 +95,7 @@ contract TrustDevTokensLocker {
     IBEP20 TRUST = IBEP20(0x2dBd86A424a815AD2A08a2D8dAE07007fed6Dc91);
 
     modifier onlyOwners() {
-        require(msg.sender == 0xe1cDA441ffA203eCA692E3398f3C3346Ee2B786e || msg.sender == 0x59b9b3C706a00E0A546035806A95e54b0b948D7d, "You are not one of the owners");
+        require(msg.sender == 0xe1cDA441ffA203eCA692E3398f3C3346Ee2B786e || msg.sender == 0xE298a311949745b7009174A9bD7c990ffE3Eea5E, "You are not one of the owners");
         _;
     }
 
@@ -108,7 +108,7 @@ contract TrustDevTokensLocker {
         require(block.timestamp >= firstWithdrawDate, "First withdraw date didn't come yet");
         require(block.timestamp >= nextWithdrawDate, "Next withdraw date didn't come yet");
         nextWithdrawDate = block.timestamp.add(60 days); // Next withdraw will be after 60 days
-        TRUST.safeTransfer(multisig, 40625 ether); // 40625 TRUST tokens 
+        TRUST.safeTransfer(multisig, 32500 ether); // 32500 TRUST tokens 
     }
 
     function recoverTokens(IBEP20 token, uint256 amount) onlyOwners external {
